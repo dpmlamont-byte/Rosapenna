@@ -8,19 +8,15 @@
 <style>
 body {
 font-family: Arial;
-background: linear-gradient(#0b3d2e, #021a13);
+background: #0b3d2e;
 color: white;
 text-align: center;
 margin:0;
 }
 
-.header {
-padding:20px;
-background:#06251c;
-}
-
 h1 {
 color: gold;
+padding: 10px;
 }
 
 .box {
@@ -31,10 +27,10 @@ border-radius:12px;
 }
 
 input, select {
-padding:10px;
-margin:6px;
+padding:8px;
+margin:4px;
 width:90%;
-border-radius:8px;
+border-radius:6px;
 border:none;
 }
 
@@ -45,7 +41,6 @@ border:none;
 width:95%;
 border-radius:8px;
 font-weight:bold;
-cursor:pointer;
 }
 
 .holes {
@@ -54,7 +49,7 @@ grid-template-columns: repeat(3,1fr);
 }
 
 li {
-padding:8px;
+padding:6px;
 border-bottom:1px solid #333;
 }
 </style>
@@ -62,17 +57,7 @@ border-bottom:1px solid #333;
 
 <body>
 
-<div class="header">
 <h1>Rosapenna 2026 ⛳</h1>
-🍺 🍺 🍺
-</div>
-
-<div class="box">
-<h3>💰 Payments</h3>
-<a href="https://revolut.me/daniel75yn" target="_blank">
-<button>Pay Entry / Trip Fees</button>
-</a>
-</div>
 
 <div class="box">
 <h3>Enter Round</h3>
@@ -93,49 +78,29 @@ border-bottom:1px solid #333;
 <option>Potdogg</option>
 </select>
 
-<select id="course">
-<option>Sandy Hills</option>
-<option>St Patrick’s Links</option>
-<option>Old Tom Morris</option>
-</select>
-
-<input id="hcp" type="number" placeholder="Handicap">
+<input id="hcp" placeholder="Handicap" type="number">
 
 <div class="holes" id="holes"></div>
 
+<br>
 <button onclick="submitScore()">Submit Round</button>
 </div>
 
 <div class="box">
-<h3>🏆 Leaderboard</h3>
+<h3>Leaderboard</h3>
 <ul id="board"></ul>
 </div>
 
 <script>
 const supabaseClient = supabase.createClient(
 "https://yhssrjvicbhualcbojhb.supabase.co",
-"
-"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...."
-"
+"const supabaseClient = supabase.createClient(
+"https://yhssrjvicbhualcbojhb.supabase.co",
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inloc3NyanZpY2JodWFsY2JvamhiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2NTA2MzYsImV4cCI6MjA5MTIyNjYzNn0.8ex8oZ_MlTVme9_1qsxfMh_T8WFl-MmkrugAoypNI1c"
+);"
 );
 
-// Course pars
-function getPars(course){
-
-if(course === "Sandy Hills"){
-return [5,4,3,4,4,4,3,5,4,4,3,4,5,4,4,3,5,4];
-}
-
-if(course === "St Patrick’s Links"){
-return [4,5,3,4,4,5,3,4,4,4,4,5,3,4,4,3,5,3];
-}
-
-if(course === "Old Tom Morris"){
-return [4,4,3,5,4,4,3,5,4,4,5,3,4,4,3,5,4,3];
-}
-}
-
-// Generate holes
+// Create 18 holes
 let holesDiv = document.getElementById("holes");
 for(let i=1;i<=18;i++){
 holesDiv.innerHTML += `<input type="number" placeholder="H${i}" id="h${i}">`;
@@ -143,43 +108,28 @@ holesDiv.innerHTML += `<input type="number" placeholder="H${i}" id="h${i}">`;
 
 // Submit score
 async function submitScore(){
-
 let name = document.getElementById("name").value;
-let course = document.getElementById("course").value;
 let hcp = parseInt(document.getElementById("hcp").value || 0);
 
-let pars = getPars(course);
-
 let total = 0;
-let birdies = 0;
-let eagles = 0;
-
 for(let i=1;i<=18;i++){
-let score = parseInt(document.getElementById("h"+i).value || 0);
-total += score;
-
-let par = pars[i-1];
-
-if(score === par - 1) birdies++;
-if(score <= par - 2) eagles++;
+total += parseInt(document.getElementById("h"+i).value || 0);
 }
 
-let totalPar = pars.reduce((a,b)=>a+b,0);
 let net = total - hcp;
-let stableford = 36 + (totalPar - net);
+let stableford = 36 + (72 - net);
 
 await supabaseClient.from("scores").insert([
-{ name, course, total, net, stableford, birdies, eagles }
+{ name, total, net, stableford }
 ]);
 
-alert("Score submitted 🍺");
+alert("Score submitted!");
 loadScores();
 }
 
 // Load leaderboard
 async function loadScores(){
-
-const { data } = await supabaseClient
+let { data, error } = await supabaseClient
 .from("scores")
 .select("*");
 
@@ -191,12 +141,7 @@ if(!data) return;
 data.sort((a,b)=>b.stableford-a.stableford);
 
 data.forEach((p,i)=>{
-list.innerHTML += `
-<li>
-${i+1}. ${p.name} (${p.course})<br>
-🏆 ${p.stableford} pts | Net ${p.net}<br>
-🐦 ${p.birdies} | 🦅 ${p.eagles}
-</li>`;
+list.innerHTML += `<li>${i+1}. ${p.name} | ${p.stableford} pts | Net ${p.net}</li>`;
 });
 }
 
