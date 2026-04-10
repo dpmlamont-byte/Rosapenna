@@ -1,183 +1,226 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Rosapenna 2026</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
- 
-  <style>
-    body {
-      font-family: Arial;
-      background: linear-gradient(#0b3d2e,#021a13);
-      color:white;
-      text-align:center;
-    }
- 
-    h1 { color: gold; }
- 
-    .box {
-      background:#102820;
-      padding:15px;
-      margin:10px;
-      border-radius:12px;
-    }
- 
-    input, select {
-      padding:8px;
-      margin:4px;
-      width:90%;
-      border-radius:6px;
-      border:none;
-    }
- 
-    button {
-      padding:10px;
-      background:gold;
-      border:none;
-      width:95%;
-      border-radius:6px;
-      font-weight:bold;
-    }
- 
-    .holes {
-      display:grid;
-      grid-template-columns: repeat(3,1fr);
-    }
-  </style>
+<meta charset="UTF-8">
+<title>Rosapenna 2026</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+
+<style>
+body {
+  font-family: Arial;
+  background: linear-gradient(#0b3d2e,#021a13);
+  color:white;
+  text-align:center;
+  margin:0;
+}
+
+h1 { color: gold; }
+
+.box {
+  background:#102820;
+  padding:15px;
+  margin:10px;
+  border-radius:12px;
+}
+
+input, select {
+  padding:10px;
+  margin:6px 0;
+  width:90%;
+  border-radius:8px;
+  border:none;
+}
+
+button {
+  padding:12px;
+  background:gold;
+  border:none;
+  width:95%;
+  border-radius:8px;
+  font-weight:bold;
+}
+
+.holes {
+  display:grid;
+  grid-template-columns: repeat(3,1fr);
+  gap:6px;
+}
+
+.adminItem {
+  border-top:1px solid #333;
+  margin-top:10px;
+  padding-top:10px;
+}
+</style>
 </head>
- 
+
 <body>
- 
+
 <h1>Rosapenna 2026 ⛳ 🍺</h1>
- 
+
 <div class="box">
   <a href="https://revolut.me/daniel75yn" target="_blank">
     <button>💰 Pay Entry</button>
   </a>
 </div>
- 
+
 <div class="box">
-  <h3>Enter Round</h3>
- 
-  <select id="name">
-    <option>Con</option>
-    <option>Dan</option>
-    <option>Dave Mc</option>
-    <option>Graham</option>
-    <option>Joe</option>
-    <option>Karl</option>
-    <option>Liam</option>
-    <option>Louis</option>
-    <option>Mick</option>
-    <option>Morgan</option>
-    <option>Niallers</option>
-    <option>Patsy</option>
-    <option>Potdogg</option>
-  </select>
- 
-  <select id="course">
-    <option>Sandy Hills</option>
-    <option>St Patrick’s Links</option>
-    <option>Old Tom Morris</option>
-  </select>
- 
-  <input id="hcp" type="number" placeholder="Handicap">
- 
-  <div class="holes" id="holes"></div>
- 
-  <button onclick="submitScore()">Submit Round</button>
+<h3>Enter Round</h3>
+
+<select id="name">
+<option>Con</option><option>Dan</option><option>Dave Mc</option>
+<option>Graham</option><option>Joe</option><option>Karl</option>
+<option>Liam</option><option>Louis</option><option>Mick</option>
+<option>Morgan</option><option>Niallers</option><option>Patsy</option>
+<option>Potdogg</option>
+</select>
+
+<select id="course">
+<option>Sandy Hills</option>
+<option>St Patrick's Links</option>
+<option>Old Tom Morris</option>
+</select>
+
+<input id="hcp" type="number" placeholder="Handicap">
+
+<div class="holes" id="holes"></div>
+
+<button onclick="submitScore()">Submit Round</button>
 </div>
- 
+
 <div class="box">
-  <h3>🏆 Leaderboard</h3>
-  <ul id="board"></ul>
+<h3>🏆 Leaderboard</h3>
+<ul id="board"></ul>
 </div>
- 
+
+<div class="box">
+<h3>🔧 Admin</h3>
+<input id="adminPass" type="password" placeholder="Password">
+<button onclick="login()">Enter</button>
+<div id="adminPanel" style="display:none;"></div>
+</div>
+
 <script>
+
 const supabaseClient = supabase.createClient(
-  "https://yhssrjvicbhualcbojhb.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inloc3NyanZpY2JodWFsY2JvamhiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2NTA2MzYsImV4cCI6MjA5MTIyNjYzNn0.8ex8oZ_MlTVme9_1qsxfMh_T8WFl-MmkrugAoypNI1c"
+"https://yhssrjvicbhualcbojhb.supabase.co",
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inloc3NyanZpY2JodWFsY2JvamhiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU2NTA2MzYsImV4cCI6MjA5MTIyNjYzNn0.8ex8oZ_MlTVme9_1qsxfMh_T8WFl-MmkrugAoypNI1c"
 );
- 
-// Pars per course
+
+// PARS
 function getPars(course){
-  if(course==="Sandy Hills"){
-    return [5,4,3,4,4,4,3,5,4,4,3,4,5,4,4,3,5,4];
-  }
-  if(course==="St Patrick’s Links"){
-    return [4,5,3,4,4,5,3,4,4,4,4,5,3,4,4,3,5,3];
-  }
-  if(course==="Old Tom Morris"){
-    return [4,4,3,5,4,4,3,5,4,4,5,3,4,4,3,5,4,3];
-  }
+if(course==="Sandy Hills") return [5,4,3,4,4,4,3,5,4,4,3,4,5,4,4,3,5,4];
+if(course==="St Patrick's Links") return [4,5,3,4,4,5,3,4,4,4,4,5,3,4,4,3,5,3];
+return [4,4,3,5,4,4,3,5,4,4,5,3,4,4,3,5,4,3];
 }
- 
-// Create 18 hole inputs
+
+// CREATE HOLES
 let holesDiv = document.getElementById("holes");
 for(let i=1;i<=18;i++){
-  let input=document.createElement("input");
-  input.type="number";
-  input.placeholder="H"+i;
-  input.id="h"+i;
-  holesDiv.appendChild(input);
+let input=document.createElement("input");
+input.type="number";
+input.placeholder="H"+i;
+input.id="h"+i;
+holesDiv.appendChild(input);
 }
- 
-// Submit round
+
+// SUBMIT
 async function submitScore(){
- 
-  let name=document.getElementById("name").value;
-  let course=document.getElementById("course").value;
-  let hcp=parseInt(document.getElementById("hcp").value||0);
- 
-  let pars=getPars(course);
- 
-  let total=0;
-  let birdies=0;
-  let eagles=0;
- 
-  for(let i=1;i<=18;i++){
-    let score=parseInt(document.getElementById("h"+i).value||0);
-    total+=score;
- 
-    if(score===pars[i-1]-1) birdies++;
-    if(score<=pars[i-1]-2) eagles++;
-  }
- 
-  let totalPar=pars.reduce((a,b)=>a+b,0);
-  let net=total-hcp;
-  let stableford=36+(totalPar-net);
- 
-  await supabaseClient.from("scores").insert([
-    {name,course,total,net,stableford,birdies,eagles}
-  ]);
- 
-  alert("Round submitted 🍺");
-  loadScores();
+
+let name=document.getElementById("name").value;
+let course=document.getElementById("course").value;
+let hcp=parseInt(document.getElementById("hcp").value||0);
+
+let pars=getPars(course);
+
+let total=0, birdies=0, eagles=0;
+
+for(let i=1;i<=18;i++){
+let score=parseInt(document.getElementById("h"+i).value||0);
+total+=score;
+
+if(score===pars[i-1]-1) birdies++;
+if(score<=pars[i-1]-2) eagles++;
 }
- 
-// Leaderboard
-async function loadScores(){
-  let {data}=await supabaseClient.from("scores").select("*");
- 
-  let list=document.getElementById("board");
-  list.innerHTML="";
- 
-  if(!data) return;
- 
-  data.sort((a,b)=>b.stableford-a.stableford);
- 
-  data.forEach((p,i)=>{
-    list.innerHTML+=`
-    <li>
-    ${i+1}. ${p.name} (${p.course})<br>
-    ${p.stableford} pts | Net ${p.net}<br>
-    🐦 ${p.birdies} | 🦅 ${p.eagles}
-    </li>`;
-  });
-}
- 
+
+let totalPar=pars.reduce((a,b)=>a+b,0);
+let net=total-hcp;
+let stableford=36+(totalPar-net);
+
+await supabaseClient.from("scores").insert([
+{name,course,total,net,stableford,birdies,eagles}
+]);
+
+alert("Submitted 🍺");
+
 loadScores();
+}
+
+// LEADERBOARD
+async function loadScores(){
+
+let {data}=await supabaseClient
+.from("scores")
+.select("*")
+.order("stableford",{ascending:false});
+
+let list=document.getElementById("board");
+list.innerHTML="";
+
+if(!data) return;
+
+data.forEach((p,i)=>{
+
+let medal = i===0?"🥇":i===1?"🥈":i===2?"🥉":"";
+
+list.innerHTML+=`
+<li>
+${medal} ${p.name} (${p.course})<br>
+${p.stableford} pts | Net ${p.net}<br>
+🐦 ${p.birdies} | 🦅 ${p.eagles}
+</li>`;
+});
+}
+
+// ADMIN LOGIN
+function login(){
+if(document.getElementById("adminPass").value==="8886"){
+document.getElementById("adminPanel").style.display="block";
+loadAdmin();
+}else alert("Wrong password");
+}
+
+// ADMIN LOAD
+async function loadAdmin(){
+
+let {data}=await supabaseClient.from("scores").select("*");
+
+let panel=document.getElementById("adminPanel");
+panel.innerHTML="";
+
+data.forEach(p=>{
+panel.innerHTML+=`
+<div class="adminItem">
+<b>${p.name}</b> (${p.course})<br>
+${p.stableford} pts<br>
+<button onclick="del('${p.id}')">Delete</button>
+</div>`;
+});
+}
+
+// DELETE
+async function del(id){
+await supabaseClient.from("scores").delete().eq("id",id);
+loadAdmin();
+loadScores();
+}
+
+// INIT
+loadScores();
+
 </script>
- 
+
 </body>
 </html>
